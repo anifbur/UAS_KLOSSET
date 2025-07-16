@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Klosset - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .sidebar a {
+            color: white;
+            padding: 15px;
+            display: block;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 2rem;
+        }
+        .logout-btn {
+            margin: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Kiri -->
+<div class="sidebar">
+    <div>
+        <h4 class="text-center py-4 border-bottom">Klosset</h4>
+        <a th:href="@{/index}">🏠 Dashboard</a>
+        <a th:href="@{/assets/add}">➕ Tambah Aset</a>
+        <a th:href="@{/tax/calculator}">💰 Hitung Pajak</a>
+        <a th:href="@{/stok}">📦 Stok</a>
+    </div>
+    <div class="logout-btn text-center">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+        </form>
+    </div>
+</div>
+
+<!-- Konten Utama -->
+<div class="content">
+    <h2>Selamat Datang di Klosset!</h2>
+    <p th:if="${#authentication != null}" th:text="'Login sebagai: ' + ${#authentication.name}"></p>
+    <hr>
+    <p>Gunakan menu di sebelah kiri untuk mengelola aset Anda.</p>
+</div>
+
+</body>
+</html>
