@@ -63,7 +63,31 @@
     <h2>Selamat Datang di Klosset!</h2>
     <p th:if="${#authentication != null}" th:text="'Login sebagai: ' + ${#authentication.name}"></p>
     <hr>
-    <p>Gunakan menu di sebelah kiri untuk mengelola aset Anda.</p>
+
+    <h4>Daftar Aset</h4>
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Nama Aset</th>
+                <th>Jenis Aset</th>
+                <th>Qty</th>
+                <th>Harga</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="aset, iterStat : ${assets}">
+                <td th:text="${iterStat.count}">1</td>
+                <td th:text="${aset.namaAset}">Komputer</td>
+                <td th:text="${aset.jenisAset}">Elektronik</td>
+                <td th:text="${aset.qty}">10</td>
+                <td th:text="${aset.harga}">1000000</td>
+            </tr>
+            <tr th:if="${assets.size() == 0}">
+                <td colspan="5" class="text-center">Belum ada aset yang ditambahkan.</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 </body>
