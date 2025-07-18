@@ -17,17 +17,11 @@ public class DashboardController {
     private AssetRepository assetRepository;
 
     // Tampilkan dashboard
-    @GetMapping("/index")
-    public String showDashboard(Model model, Authentication authentication) {
-        // Ambil semua data aset
-        List<Asset> assets = assetRepository.findAll();
-
-        // Kirim data aset ke view
-        model.addAttribute("assets", assets);
-
-        // Tambahkan nama user jika ingin
-        model.addAttribute("username", authentication.getName());
-
-        return "index"; // Akan diarahkan ke dashboard.html
-    }
+   @GetMapping("/index")
+public String showDashboard(Model model, Authentication authentication) {
+    List<Asset> assets = assetRepository.findAll();
+    model.addAttribute("assets", assets);
+    model.addAttribute("username", authentication.getName());
+    return "index";
+}
 }

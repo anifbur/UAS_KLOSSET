@@ -34,6 +34,10 @@ public class Asset {
         return id;
     }
 
+    public void setId(Long id) {
+    this.id = id;
+}
+
     public String getNamaAset() {
         return namaAset;
     }
