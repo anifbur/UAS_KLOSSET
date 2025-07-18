@@ -1,0 +1,27 @@
+<body>
+    <h2>Data Stock Opname</h2>
+
+    <a href="/stock-opname-list/form">
+        <button>+ Tambah Stock Opname</button>
+    </a>
+
+    <table border="1">
+        <tr>
+            <th>Nama Aset</th>
+            <th>Stok Sistem</th>
+            <th>Stok Fisik</th>
+            <th>Keterangan</th>
+            <th>Tanggal</th>
+        </tr>
+        <tr th:each="so : ${stockOpnames}">
+            <td th:text="${so.asset.namaAset}"></td>
+            <td th:text="${so.stokSistem}"></td>
+            <td th:text="${so.stokFisik}"></td>
+            <td th:text="${so.keterangan}"></td>
+            <td th:text="${so.tanggal}"></td>
+        </tr>
+    </table>
+    <a href="/index">
+        <button>+ Dashboard</button>
+    </a>
+</body>
