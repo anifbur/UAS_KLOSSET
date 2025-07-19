@@ -1,5 +1,7 @@
 package com.example.klosset.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -27,6 +29,10 @@ public class Asset {
     @NotNull(message = "Harga tidak boleh kosong")
     @DecimalMin(value = "0.01", message = "Harga harus lebih dari 0")
     private Double harga;
+
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StockOpname> stockOpnames;
+
 
     // Getter & Setter
 
