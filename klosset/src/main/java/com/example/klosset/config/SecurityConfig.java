@@ -18,23 +18,20 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/login", "/register", "/error", "/css/**", "/js/**").permitAll() // Tambahkan /error
-                                .requestMatchers("/tax/**", "/stok/**").hasRole("ADMIN")
-                                .requestMatchers("/index", "/assets/**").hasAnyRole("ADMIN", "USER")
-                                .anyRequest().authenticated()
-                )
+                        .requestMatchers("/login", "/register", "/error", "/css/**", "/js/**").permitAll() // Tambahkan
+                        .requestMatchers("/stok/**").hasRole("ADMIN")
+                        .requestMatchers("/index", "/tax/**", "/assets/**").hasAnyRole("ADMIN", "USER")
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
-                                .loginPage("/login")
-                                .defaultSuccessUrl("/index", true)
-                                .permitAll()
-                )
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/index", true)
+                        .permitAll())
                 .logout(logout -> logout
-                                .logoutUrl("/logout")
-                                .logoutSuccessUrl("/login?logout")
-                                .permitAll()
-                )
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll())
                 .exceptionHandling(exception -> exception
-                                .accessDeniedPage("/403") // arahkan ke error controller
+                        .accessDeniedPage("/403") // arahkan ke error controller
                 )
                 .csrf(csrf -> csrf.disable());
 
