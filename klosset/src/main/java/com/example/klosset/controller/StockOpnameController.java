@@ -7,6 +7,7 @@ import com.example.klosset.repository.StockOpnameRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -57,7 +58,7 @@ public class StockOpnameController {
 
     // ✅ FIXED: Menampilkan list STO (group by tanggal)
     @GetMapping("/list")
-    public String listStockOpname(Model model) {
+    public String listStockOpname(Model model, Authentication authentication) {
         List<StockOpname> stockOpnames = stockOpnameRepository.findAll();
 
         List<LocalDate> tanggalUnik = stockOpnames.stream()
@@ -67,6 +68,11 @@ public class StockOpnameController {
                 .collect(Collectors.toList());
 
         model.addAttribute("tanggalUnik", tanggalUnik);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        model.addAttribute("isAdmin", isAdmin);
         return "stock-opname-list";
     }
 
@@ -106,7 +112,8 @@ public class StockOpnameController {
     // Export PDF berdasarkan tanggal STO
     @GetMapping("/export/pdf/{tanggal}")
     @ResponseBody
-    public void exportPdfByTanggal(@PathVariable("tanggal") String tanggalStr, HttpServletResponse response) throws Exception {
+    public void exportPdfByTanggal(@PathVariable("tanggal") String tanggalStr, HttpServletResponse response)
+            throws Exception {
         LocalDate tanggal = LocalDate.parse(tanggalStr);
         List<StockOpname> data = stockOpnameRepository.findByTanggal(tanggal);
 
@@ -117,14 +124,15 @@ public class StockOpnameController {
         PdfWriter.getInstance(document, response.getOutputStream());
         document.open();
 
-        Paragraph title = new Paragraph("Laporan Stock Opname (" + tanggal + ")", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16));
+        Paragraph title = new Paragraph("Laporan Stock Opname (" + tanggal + ")",
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16));
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingAfter(15);
         document.add(title);
 
         PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
-        table.setWidths(new int[]{3, 2, 2, 3, 3});
+        table.setWidths(new int[] { 3, 2, 2, 3, 3 });
         Stream.of("Nama Aset", "Stok Sistem", "Stok Fisik", "Keterangan", "Tanggal")
                 .forEach(col -> {
                     PdfPCell header = new PdfPCell(new Phrase(col));
