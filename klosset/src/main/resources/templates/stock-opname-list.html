@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Stock Opname - Klosset</title>
@@ -85,7 +86,9 @@
         <h4 class="text-center py-4 border-bottom">Klosset</h4>
         <a th:href="@{/index}">🏠 Dashboard</a>
         <a th:href="@{/assets/add}">➕ Tambah Aset</a>
-        <a th:href="@{/tax/calculator}">💰 Hitung Pajak</a>
+        <div th:if="${isAdmin}">
+            <a th:href="@{/tax/calculator}">💰 Hitung Pajak</a>
+        </div>
         <a th:href="@{/stock-opname-list/list}">📦 Stok</a>
     </div>
     <div class="logout-btn text-center">

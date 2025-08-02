@@ -40,6 +40,14 @@ public class DashboardController {
         model.addAttribute("assets", assets);
         model.addAttribute("username", authentication.getName());
         model.addAttribute("assetCountByType", assetCountByType);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        System.out.println("Is user admin? " + isAdmin);
+        System.out.println("User roles: " + authentication.getAuthorities());
+
+        model.addAttribute("isAdmin", isAdmin);
         return "index";
     }
 }

@@ -48,6 +48,11 @@ public class TaxController {
             summary.setTotalPajak(pajak);
         }
 
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        model.addAttribute("isAdmin", isAdmin);
+
         model.addAttribute("summaries", summaries);
         model.addAttribute("totalAsset", totalAsset);
         model.addAttribute("totalPajak", totalPajak);
