@@ -138,7 +138,7 @@
     </table>
 
     <!-- Grafik -->
-    <div class="card-chart">
+    <div class="" style="position: relative; height: 300px; width: 100%; margin-top: 2rem;">
         <h5 class="mb-3">📊 Grafik Jumlah Aset per Jenis</h5>
         <canvas id="assetChart"></canvas>
     </div>
@@ -203,38 +203,42 @@
 
     const ctx = document.getElementById('assetChart').getContext('2d');
     new Chart(ctx, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Total Qty per Jenis Aset',
                 data: data,
-                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-                borderRadius: 4
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)'
+                ],
+                borderColor: '#fff',
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
+                legend: {
+                    display: true,
+                    position: 'right'
+                },
                 tooltip: {
                     backgroundColor: '#343a40',
                     titleColor: '#fff',
                     bodyColor: '#fff'
                 }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
             }
         }
     });
+
+
     /*]]>*/
 </script>
 
