@@ -33,7 +33,6 @@ public class Asset {
     @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StockOpname> stockOpnames;
 
-
     // Getter & Setter
 
     public Long getId() {
@@ -41,8 +40,8 @@ public class Asset {
     }
 
     public void setId(Long id) {
-    this.id = id;
-}
+        this.id = id;
+    }
 
     public String getNamaAset() {
         return namaAset;

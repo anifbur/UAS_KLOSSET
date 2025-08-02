@@ -29,4 +29,8 @@ public class AssetSummary {
     public Double getTotalPajak() {
         return totalPajak;
     }
+
+    public void setTotalPajak(Double totalPajak) {
+        this.totalPajak = totalPajak;
+    }
 }

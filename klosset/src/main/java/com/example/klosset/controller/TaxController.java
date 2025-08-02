@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.klosset.helper.AssetGroupProjection;
 import com.example.klosset.helper.AssetSummary;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,15 +26,33 @@ public class TaxController {
     public String showTax(Model model, Authentication authentication) {
         List<AssetGroupProjection> groupedAssets = assetRepository.findGroupedAssets();
 
-        // Hitung total pajak (20%) manual
+        // Mapping grouped data ke summary
         List<AssetSummary> summaries = groupedAssets.stream()
                 .map(data -> new AssetSummary(
-                        JenisAsset.valueOf(data.getKategori()), // konversi String ke enum
+                        JenisAsset.valueOf(data.getKategori()),
                         data.getTotalAsset()))
                 .collect(Collectors.toList());
 
+        // Hitung totalAsset dan totalPajak
+        Double totalAsset = 0.0;
+        Double totalPajak = 0.0;
+
+        for (AssetSummary summary : summaries) {
+            Double asset = summary.getTotalAsset();
+            Double pajakPersen = Double.valueOf(summary.getPajakPersen());
+            Double pajak = asset * pajakPersen;
+
+            totalAsset += asset;
+            totalPajak += pajak;
+
+            summary.setTotalPajak(pajak);
+        }
+
         model.addAttribute("summaries", summaries);
+        model.addAttribute("totalAsset", totalAsset);
+        model.addAttribute("totalPajak", totalPajak);
         model.addAttribute("username", authentication.getName());
+
         return "tax";
     }
 

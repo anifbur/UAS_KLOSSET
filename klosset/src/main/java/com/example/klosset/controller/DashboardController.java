@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -17,11 +18,20 @@ public class DashboardController {
     private AssetRepository assetRepository;
 
     // Tampilkan dashboard
-   @GetMapping("/index")
-public String showDashboard(Model model, Authentication authentication) {
-    List<Asset> assets = assetRepository.findAll();
-    model.addAttribute("assets", assets);
-    model.addAttribute("username", authentication.getName());
-    return "index";
-}
+    @GetMapping("/index")
+    public String showDashboard(@RequestParam(value = "search", required = false) String search,
+            Model model, Authentication authentication) {
+        List<Asset> assets;
+
+        if (search != null && !search.isBlank()) {
+            assets = assetRepository.findByNamaAsetContainingIgnoreCase(search); // butuh custom query
+        } else {
+            assets = assetRepository.findAll();
+        }
+
+        model.addAttribute("assets", assets);
+        model.addAttribute("username", authentication.getName());
+        return "index";
+    }
+
 }
