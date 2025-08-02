@@ -8,9 +8,10 @@
 
 ## Profil
 
-**Kelompok**: Anif Burhanudin - 23552011075
-              Muhammad Rijal - 23552011138
-              Ikmal Khoerudin - 23552011373
+**Kelompok**: <br>
+Anif Burhanudin - 23552011075  <br>
+Muhammad Rijal - 23552011138 <br>
+Ikmal Khoerudin - 23552011373 <br>
 
 ---
 
