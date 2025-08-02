@@ -108,5 +108,5 @@ Kita tidak tahu detail query-nya, tapi cukup memanggil method ini dan Spring Dat
 ## **Demo Proyek**
 
 **GitHub**: https://github.com/anifbur/UAS_KLOSSET
-**Google Drive**: 
+**Google Drive**: https://drive.google.com/drive/folders/1dySVN014VzHSIFiOrEDYu5APXRSZ7VIX?usp=sharing
 
