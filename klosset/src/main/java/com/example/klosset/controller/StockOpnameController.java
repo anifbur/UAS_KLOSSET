@@ -58,7 +58,11 @@ public class StockOpnameController {
 
     // ✅ FIXED: Menampilkan list STO (group by tanggal)
     @GetMapping("/list")
+<<<<<<< Updated upstream
     public String listStockOpname(Model model, Authentication authentication) {
+=======
+    public String listStockOpname(Model model) {
+>>>>>>> Stashed changes
         List<StockOpname> stockOpnames = stockOpnameRepository.findAll();
 
         List<LocalDate> tanggalUnik = stockOpnames.stream()
@@ -68,6 +72,7 @@ public class StockOpnameController {
                 .collect(Collectors.toList());
 
         model.addAttribute("tanggalUnik", tanggalUnik);
+<<<<<<< Updated upstream
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
@@ -76,6 +81,11 @@ public class StockOpnameController {
         return "stock-opname-list";
     }
 
+=======
+        return "stock-opname-list";
+    }
+
+>>>>>>> Stashed changes
     // Menampilkan form STO All
     @GetMapping("/form-all")
     public String showFormAll(Model model) {
@@ -112,8 +122,12 @@ public class StockOpnameController {
     // Export PDF berdasarkan tanggal STO
     @GetMapping("/export/pdf/{tanggal}")
     @ResponseBody
+<<<<<<< Updated upstream
     public void exportPdfByTanggal(@PathVariable("tanggal") String tanggalStr, HttpServletResponse response)
             throws Exception {
+=======
+    public void exportPdfByTanggal(@PathVariable("tanggal") String tanggalStr, HttpServletResponse response) throws Exception {
+>>>>>>> Stashed changes
         LocalDate tanggal = LocalDate.parse(tanggalStr);
         List<StockOpname> data = stockOpnameRepository.findByTanggal(tanggal);
 
@@ -124,15 +138,23 @@ public class StockOpnameController {
         PdfWriter.getInstance(document, response.getOutputStream());
         document.open();
 
+<<<<<<< Updated upstream
         Paragraph title = new Paragraph("Laporan Stock Opname (" + tanggal + ")",
                 FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16));
+=======
+        Paragraph title = new Paragraph("Laporan Stock Opname (" + tanggal + ")", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16));
+>>>>>>> Stashed changes
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingAfter(15);
         document.add(title);
 
         PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
+<<<<<<< Updated upstream
         table.setWidths(new int[] { 3, 2, 2, 3, 3 });
+=======
+        table.setWidths(new int[]{3, 2, 2, 3, 3});
+>>>>>>> Stashed changes
         Stream.of("Nama Aset", "Stok Sistem", "Stok Fisik", "Keterangan", "Tanggal")
                 .forEach(col -> {
                     PdfPCell header = new PdfPCell(new Phrase(col));
