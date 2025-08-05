@@ -6,20 +6,15 @@
     <title>Daftar Stock Opname</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container mt-4">
+<body>
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 <!-- Sidebar -->
 <div class="sidebar">
     <div>
         <h4 class="text-center py-4 border-bottom">Klosset</h4>
         <a th:href="@{/index}">🏠 Dashboard</a>
         <a th:href="@{/assets/add}">➕ Tambah Aset</a>
-        <div th:if="${isAdmin}">
-            <a th:href="@{/tax/calculator}">💰 Hitung Pajak</a>
-        </div>
+        <a th:href="@{/tax/calculator}">💰 Hitung Pajak</a>
         <a th:href="@{/stock-opname-list/list}">📦 Stok</a>
     </div>
     <div class="logout-btn text-center">
@@ -28,39 +23,43 @@
         </form>
     </div>
 </div>
-=======
-<h2 class="mb-4">Daftar Stock Opname</h2>
->>>>>>> Stashed changes
-=======
-<h2 class="mb-4">Daftar Stock Opname</h2>
->>>>>>> Stashed changes
-=======
-<h2 class="mb-4">Daftar Stock Opname</h2>
->>>>>>> Stashed changes
 
-<table class="table table-bordered table-hover">
-    <thead class="table-light">
-    <tr>
-        <th>No</th>
-        <th>Tanggal</th>
-        <th>Export</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="tanggal, iterStat : ${tanggalUnik}">
-        <td th:text="${iterStat.index + 1}">1</td>
-        <td th:text="${tanggal}">2025-08-02</td>
-        <td>
-            <a th:href="@{'/stock-opname-list/export/pdf/' + ${tanggal}}" class="btn btn-sm btn-danger">
-                Unduh PDF
-            </a>
-        </td>
-    </tr>
-    <tr th:if="${tanggalUnik.size() == 0}">
-        <td colspan="3" class="text-center">Belum ada data stock opname.</td>
-    </tr>
-    </tbody>
-</table>
+<!-- Konten -->
+<div class="content">
+    <h2 class="mb-4">Data Stock Opname</h2>
+
+    <div class="btn-container">
+        <a href="/stock-opname-list/form">
+            <button>+ Tambah Stock Opname</button>
+        </a>
+        <a href="/index">
+            <button>← Kembali ke Dashboard</button>
+        </a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nama Aset</th>
+                <th>Stok Sistem</th>
+                <th>Stok Fisik</th>
+                <th>Keterangan</th>
+                <th>Tanggal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="so : ${stockOpnames}">
+                <td th:text="${so.asset.namaAset}">Nama</td>
+                <td th:text="${so.stokSistem}">10</td>
+                <td th:text="${so.stokFisik}">8</td>
+                <td th:text="${so.keterangan}">Hilang 2 unit</td>
+                <td th:text="${so.tanggal}">2025-08-01</td>
+            </tr>
+            <tr th:if="${stockOpnames.size() == 0}">
+                <td colspan="5" class="text-center">Belum ada data stock opname.</td>
+            </tr>
+        </tbody>
+    </table>
 
 <a href="/stock-opname-list/form" class="btn btn-primary">Tambah STO Satuan</a>
 <a href="/stock-opname-list/form-all" class="btn btn-secondary">Tambah STO All</a>
