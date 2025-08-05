@@ -4,6 +4,7 @@ import com.example.klosset.model.Asset;
 import com.example.klosset.repository.AssetRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,15 +19,23 @@ public class AssetController {
     private AssetRepository assetRepository;
 
     @GetMapping("/assets/add")
-    public String showAddForm(Model model) {
+    public String showAddForm(Model model, Authentication authentication) {
         model.addAttribute("asset", new Asset());
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        System.out.println("Is user admin? " + isAdmin);
+        System.out.println("User roles: " + authentication.getAuthorities());
+
+        model.addAttribute("isAdmin", isAdmin);
         return "add-asset";
     }
 
     @PostMapping("/assets/add")
     public String addAsset(@Valid @ModelAttribute("asset") Asset asset,
-                           BindingResult result,
-                           Model model) {
+            BindingResult result,
+            Model model) {
         if (result.hasErrors()) {
             return "add-asset";
         }
