@@ -1,43 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Tambah Stock Opname</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Stock Opname Satuan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="container mt-5">
-    <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Form Tambah Stock Opname</h4>
+<body class="container mt-4">
+
+    <h2>Stock Opname (Satuan)</h2>
+
+    <form th:action="@{/stock-opname-list/save}" th:object="${stockOpname}" method="post">
+        <div class="mb-3">
+            <label for="asset" class="form-label">Nama Aset</label>
+            <select class="form-select" id="asset" name="asset.id" required>
+                <option value="" disabled selected>Pilih Aset</option>
+                <option th:each="asset : ${assets}" 
+                        th:value="${asset.id}" 
+                        th:text="${asset.namaAset}">
+                </option>
+            </select>
         </div>
-        <div class="card-body">
-            <form th:action="@{/stock-opname-list/save}" method="post">
-                <div class="mb-3">
-                    <label for="assetId" class="form-label">Pilih Aset:</label>
-                    <select name="assetId" id="assetId" class="form-select" required>
-                        <option value="" disabled selected>-- Pilih Aset --</option>
-                        <option th:each="asset : ${assets}"
-                                th:value="${asset.id}"
-                                th:text="${asset.namaAset}">
-                        </option>
-                    </select>
-                </div>
 
-                <div class="mb-3">
-                    <label for="realStock" class="form-label">Stok Fisik:</label>
-                    <input type="number" id="realStock" name="realStock" class="form-control" required />
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <a th:href="@{/stock-opname-list/list}" class="btn btn-secondary">← Kembali</a>
-                    <button type="submit" class="btn btn-success">💾 Simpan</button>
-                </div>
-            </form>
+        <div class="mb-3">
+            <label for="stokFisik" class="form-label">Stok Fisik</label>
+            <input type="number" class="form-control" id="stokFisik" name="stokFisik" min="0" required>
         </div>
-    </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </form>
+
 </body>
 </html>

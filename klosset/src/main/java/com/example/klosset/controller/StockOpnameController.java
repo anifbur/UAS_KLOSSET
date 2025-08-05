@@ -4,19 +4,20 @@ import com.example.klosset.model.Asset;
 import com.example.klosset.model.StockOpname;
 import com.example.klosset.repository.AssetRepository;
 import com.example.klosset.repository.StockOpnameRepository;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
-
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Controller
@@ -29,72 +30,110 @@ public class StockOpnameController {
     @Autowired
     private AssetRepository assetRepository;
 
+    // Menampilkan form STO satuan
     @GetMapping("/form")
     public String showForm(Model model) {
+        model.addAttribute("stockOpname", new StockOpname());
         model.addAttribute("assets", assetRepository.findAll());
         return "stock-opname-form";
     }
 
+    // Simpan STO satuan
     @PostMapping("/save")
-    public String save(@RequestParam("assetId") Long assetId,
-                       @RequestParam("realStock") int realStock) {
+    public String save(@ModelAttribute StockOpname stockOpname) {
+        Asset asset = assetRepository.findById(stockOpname.getAsset().getId()).orElse(null);
+        if (asset != null) {
+            stockOpname.setStokSistem(asset.getQty());
+            stockOpname.setTanggal(LocalDate.now());
+            if (stockOpname.getStokFisik() == asset.getQty()) {
+                stockOpname.setKeterangan("Sesuai");
+            } else {
+                stockOpname.setKeterangan("Tidak Sesuai");
+            }
+            stockOpnameRepository.save(stockOpname);
+        }
+        return "redirect:/stock-opname-list/list";
+    }
 
-        Asset asset = assetRepository.findById(assetId)
-                .orElseThrow(() -> new IllegalArgumentException("ID aset tidak valid"));
+    // ✅ FIXED: Menampilkan list STO (group by tanggal)
+    @GetMapping("/list")
+    public String listStockOpname(Model model) {
+        List<StockOpname> stockOpnames = stockOpnameRepository.findAll();
 
-        int systemStock = asset.getQty();
-        String note = (realStock == systemStock) ? "Sesuai" : "Tidak Sesuai";
+        List<LocalDate> tanggalUnik = stockOpnames.stream()
+                .map(StockOpname::getTanggal)
+                .distinct()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
 
-        StockOpname opname = new StockOpname();
-        opname.setAsset(asset);
-        opname.setStokFisik(realStock);
-        opname.setStokSistem(systemStock);
-        opname.setKeterangan(note);
-        opname.setTanggal(LocalDate.now());
+        model.addAttribute("tanggalUnik", tanggalUnik);
+        return "stock-opname-list";
+    }
 
-        stockOpnameRepository.save(opname);
+    // Menampilkan form STO All
+    @GetMapping("/form-all")
+    public String showFormAll(Model model) {
+        model.addAttribute("assets", assetRepository.findAll());
+        return "stock-opname-form-all";
+    }
+
+    // Simpan semua hasil STO sekaligus
+    @PostMapping("/save-all")
+    public String saveAll(@RequestParam MultiValueMap<String, String> formData) {
+        List<Asset> allAssets = assetRepository.findAll();
+        LocalDate today = LocalDate.now();
+
+        for (Asset asset : allAssets) {
+            String realStockStr = formData.getFirst("realStock_" + asset.getId());
+            if (realStockStr != null && !realStockStr.isEmpty()) {
+                int realStock = Integer.parseInt(realStockStr);
+                int systemStock = asset.getQty();
+                String note = (realStock == systemStock) ? "Sesuai" : "Tidak Sesuai";
+
+                StockOpname opname = new StockOpname();
+                opname.setAsset(asset);
+                opname.setStokFisik(realStock);
+                opname.setStokSistem(systemStock);
+                opname.setKeterangan(note);
+                opname.setTanggal(today);
+                stockOpnameRepository.save(opname);
+            }
+        }
 
         return "redirect:/stock-opname-list/list";
     }
 
-    @GetMapping("/list")
-    public String list(Model model) {
-        model.addAttribute("stockOpnames", stockOpnameRepository.findAll());
-        return "stock-opname-list";
-    }
-
-    @GetMapping("/export/pdf")
+    // Export PDF berdasarkan tanggal STO
+    @GetMapping("/export/pdf/{tanggal}")
     @ResponseBody
-    public void exportToPdf(HttpServletResponse response) throws DocumentException, IOException {
+    public void exportPdfByTanggal(@PathVariable("tanggal") String tanggalStr, HttpServletResponse response) throws Exception {
+        LocalDate tanggal = LocalDate.parse(tanggalStr);
+        List<StockOpname> data = stockOpnameRepository.findByTanggal(tanggal);
+
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=stock-opname.pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=stock-opname-" + tanggal + ".pdf");
 
         Document document = new Document();
         PdfWriter.getInstance(document, response.getOutputStream());
-
         document.open();
 
-        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
-        Paragraph title = new Paragraph("Laporan Stock Opname", titleFont);
+        Paragraph title = new Paragraph("Laporan Stock Opname (" + tanggal + ")", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16));
         title.setAlignment(Element.ALIGN_CENTER);
-        title.setSpacingAfter(20);
+        title.setSpacingAfter(15);
         document.add(title);
 
         PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
         table.setWidths(new int[]{3, 2, 2, 3, 3});
-
-        Font headFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-
         Stream.of("Nama Aset", "Stok Sistem", "Stok Fisik", "Keterangan", "Tanggal")
-                .forEach(columnTitle -> {
-                    PdfPCell header = new PdfPCell(new Phrase(columnTitle, headFont));
-                    header.setHorizontalAlignment(Element.ALIGN_CENTER);
+                .forEach(col -> {
+                    PdfPCell header = new PdfPCell(new Phrase(col));
                     header.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    header.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table.addCell(header);
                 });
 
-        for (StockOpname opname : stockOpnameRepository.findAll()) {
+        for (StockOpname opname : data) {
             table.addCell(opname.getAsset().getNamaAset());
             table.addCell(String.valueOf(opname.getStokSistem()));
             table.addCell(String.valueOf(opname.getStokFisik()));
